@@ -1,0 +1,220 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="{Binding [WindowTitle], Source={StaticResource UiStrings}, Mode=OneWay}"
+ Width="1180" Height="790" MinWidth="820" MinHeight="580" WindowStartupLocation="CenterScreen"
+ FontFamily="Microsoft YaHei UI, Segoe UI" FontSize="13" Background="#F3F5F7" Foreground="#202C33">
+ <Window.Resources>
+  <SolidColorBrush x:Key="Accent" Color="#166C65"/>
+  <Style x:Key="TreeObject" TargetType="TextBlock">
+   <Setter Property="Margin" Value="22,0,0,0"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+   <Setter Property="ToolTip" Value="{Binding Name}"/>
+  </Style>
+  <Style x:Key="CategoryHeader" TargetType="Expander">
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Expander">
+    <StackPanel>
+     <ToggleButton x:Name="Toggle" HorizontalContentAlignment="Stretch" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+      <ToggleButton.Template><ControlTemplate TargetType="ToggleButton">
+       <Border Background="#EAF0F2" BorderBrush="#D4E0E2" BorderThickness="0,0,0,1" Padding="8,2">
+        <DockPanel><Path x:Name="Arrow" Fill="#41565B" VerticalAlignment="Center" Margin="0,0,8,0" Data="M 0,0 L 6,4 L 0,8 Z"/>
+         <ContentPresenter VerticalAlignment="Center"/>
+        </DockPanel>
+       </Border>
+       <ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Arrow" Property="Data" Value="M 0,1 L 8,1 L 4,7 Z"/></Trigger></ControlTemplate.Triggers>
+      </ControlTemplate></ToggleButton.Template>
+      <ContentPresenter ContentSource="Header"/>
+     </ToggleButton>
+     <ContentPresenter x:Name="Body" Visibility="Collapsed"/>
+    </StackPanel>
+    <ControlTemplate.Triggers><Trigger Property="IsExpanded" Value="True"><Setter TargetName="Body" Property="Visibility" Value="Visible"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="SqlCell" TargetType="DataGridCell">
+   <Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="0"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell">
+    <Border x:Name="Edge" Background="Transparent" BorderThickness="0,1"><ContentPresenter VerticalAlignment="Center"/></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="Edge" Property="BorderBrush" Value="#537E94"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="FilterButton" TargetType="RadioButton">
+   <Setter Property="Cursor" Value="Hand"/><Setter Property="Margin" Value="0,0,3,0"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+    <Border x:Name="FilterBg" Background="#F0F4F4" Padding="10,5" CornerRadius="3" BorderBrush="#DFE7E7" BorderThickness="1">
+     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="FilterBg" Property="Background" Value="#DDEBE9"/></Trigger>
+     <Trigger Property="IsChecked" Value="True"><Setter TargetName="FilterBg" Property="Background" Value="#215D58"/><Setter Property="Foreground" Value="White"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Button">
+   <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#293F43"/>
+   <Setter Property="BorderBrush" Value="#BECBCB"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="12,6"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border x:Name="B" CornerRadius="4" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Border><ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="Opacity" Value=".82"/></Trigger>
+     <Trigger Property="IsPressed" Value="True"><Setter TargetName="B" Property="Opacity" Value=".65"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter TargetName="B" Property="Opacity" Value=".45"/></Trigger>
+    </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="DataGrid"><Setter Property="IsReadOnly" Value="True"/><Setter Property="CanUserAddRows" Value="False"/>
+   <Setter Property="CanUserDeleteRows" Value="False"/><Setter Property="CanUserReorderColumns" Value="False"/>
+   <Setter Property="SelectionMode" Value="Single"/><Setter Property="HeadersVisibility" Value="Column"/>
+   <Setter Property="AutoGenerateColumns" Value="False"/><Setter Property="GridLinesVisibility" Value="Horizontal"/>
+   <Setter Property="HorizontalGridLinesBrush" Value="#E9EDF0"/><Setter Property="BorderThickness" Value="0"/>
+   <Setter Property="RowBackground" Value="White"/><Setter Property="Background" Value="White"/>
+  </Style>
+  <Style TargetType="DataGridColumnHeader"><Setter Property="Background" Value="#F4F7F7"/><Setter Property="Foreground" Value="#536568"/>
+   <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Padding" Value="10,8"/><Setter Property="BorderBrush" Value="#E1E7E8"/><Setter Property="BorderThickness" Value="0,0,0,1"/>
+  </Style>
+  <Style TargetType="DataGridCell"><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border Padding="10,6" Background="{TemplateBinding Background}"><ContentPresenter VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter>
+   <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+   <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"/>
+   <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#DDEEEE"/></Trigger></Style.Triggers>
+  </Style>
+  <DataTemplate x:Key="ComparisonView">
+<DockPanel>
+     <Expander x:Name="Connections" Header="{Binding [Connections], Source={StaticResource UiStrings}, Mode=OneWay}" IsExpanded="True" DockPanel.Dock="Top" Margin="14,10,14,8">
+      <StackPanel Margin="6,8,0,2"><DockPanel Margin="0,0,0,8"><Label Content="{Binding [ComparisonName], Source={StaticResource UiStrings}, Mode=OneWay}" Padding="0,4,10,4"/><TextBox x:Name="ComparisonName" VerticalContentAlignment="Center" Padding="5,2" MaxLength="160" ToolTip="{Binding [NameHint], Source={StaticResource UiStrings}, Mode=OneWay}"/></DockPanel><Grid>
+       <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="20"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <StackPanel><TextBlock Text="{Binding [LeftConnection], Source={StaticResource UiStrings}, Mode=OneWay}" Margin="0,0,0,5"/><TextBox x:Name="LeftConn" Height="32" Padding="7,3" VerticalContentAlignment="Center" ToolTip="{Binding [LeftExample], Source={StaticResource UiStrings}, Mode=OneWay}"/></StackPanel>
+       <StackPanel Grid.Column="2"><TextBlock Text="{Binding [RightConnection], Source={StaticResource UiStrings}, Mode=OneWay}" Margin="0,0,0,5"/><TextBox x:Name="RightConn" Height="32" Padding="7,3" VerticalContentAlignment="Center" ToolTip="{Binding [RightExample], Source={StaticResource UiStrings}, Mode=OneWay}"/></StackPanel>
+       <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="12,0,0,0">
+        <Button x:Name="Compare" Content="{Binding [Start], Source={StaticResource UiStrings}, Mode=OneWay}" Background="#166C65" BorderBrush="#166C65" Foreground="White" FontWeight="SemiBold"/>
+        <Button x:Name="Cancel" Content="{Binding [Cancel], Source={StaticResource UiStrings}, Mode=OneWay}" Visibility="Collapsed" Margin="5,0,0,0"/>
+       </StackPanel>
+      </Grid></StackPanel>
+     </Expander>
+     <Border DockPanel.Dock="Top" Height="1" Background="#DCE4E4"/>
+     <Grid>
+       <DataGrid x:Name="Objects" RowHeight="28" EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.ScrollUnit="Pixel">
+        <DataGrid.GroupStyle><GroupStyle HidesIfEmpty="True">
+         <GroupStyle.ContainerStyle><Style TargetType="GroupItem">
+          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="GroupItem">
+           <StackPanel>
+            <Expander Style="{StaticResource CategoryHeader}" IsExpanded="{Binding Name.Expanded, Mode=TwoWay}">
+             <Expander.Header><StackPanel Orientation="Horizontal" Margin="3,3">
+              <TextBlock Text="{Binding Name.DisplayKind}" FontWeight="SemiBold"/>
+              <TextBlock Margin="10,0" Foreground="#51686A" Text="{Binding ItemCount}"/>
+             </StackPanel></Expander.Header>
+             <Border Background="White"><ItemsPresenter/></Border>
+            </Expander>
+           </StackPanel>
+          </ControlTemplate></Setter.Value></Setter>
+         </Style></GroupStyle.ContainerStyle>
+        </GroupStyle></DataGrid.GroupStyle>
+        <DataGrid.RowStyle><Style TargetType="DataGridRow"><Setter Property="Foreground" Value="#AF2835"/>
+         <Style.Triggers><DataTrigger Binding="{Binding Status}" Value="相同"><Setter Property="Foreground" Value="Black"/></DataTrigger>
+          <DataTrigger Binding="{Binding Status}" Value="定义不可读"><Setter Property="Foreground" Value="#795215"/></DataTrigger>
+         </Style.Triggers></Style></DataGrid.RowStyle>
+        <DataGrid.Columns>
+         <DataGridTextColumn Header="{Binding [LeftObject], Source={StaticResource UiStrings}, Mode=OneWay}" Binding="{Binding LeftName}" ElementStyle="{StaticResource TreeObject}" Width="2*" MinWidth="90"/>
+         <DataGridTextColumn Header="{Binding [Result], Source={StaticResource UiStrings}, Mode=OneWay}" Binding="{Binding DisplayStatus}" Width="Auto" MinWidth="105"/>
+         <DataGridTextColumn Header="{Binding [RightObject], Source={StaticResource UiStrings}, Mode=OneWay}" Binding="{Binding RightName}" ElementStyle="{StaticResource TreeObject}" Width="2*" MinWidth="90"/>
+         <DataGridTextColumn Header="{Binding [Changes], Source={StaticResource UiStrings}, Mode=OneWay}" Binding="{Binding Detail}" Width="*" MinWidth="90">
+          <DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="TextTrimming" Value="CharacterEllipsis"/><Setter Property="ToolTip" Value="{Binding Detail}"/></Style></DataGridTextColumn.ElementStyle>
+         </DataGridTextColumn>
+        </DataGrid.Columns>
+       </DataGrid>
+       <StackPanel x:Name="Empty" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False">
+        <TextBlock x:Name="EmptyTitle" Text="{Binding [Waiting], Source={StaticResource UiStrings}, Mode=OneWay}" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="EmptyHint" Margin="0,8,0,0" Text="{Binding [WaitingHint], Source={StaticResource UiStrings}, Mode=OneWay}" TextWrapping="Wrap" Foreground="#52676A" TextAlignment="Center"/>
+       </StackPanel>
+     </Grid>
+    </DockPanel>
+  </DataTemplate>
+ </Window.Resources>
+ <DockPanel Background="#F3F5F7">
+  <Menu DockPanel.Dock="Top" Background="#F5F7F7" Padding="8,2">
+   <MenuItem Header="{Binding [SessionMenu], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="SessionMenu">
+    <MenuItem Header="{Binding [Home], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="GoHome" InputGestureText="Alt+Home"/>
+    <MenuItem Header="{Binding [NewComparison], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="NewMenu" InputGestureText="Ctrl+N"/><Separator/>
+    <MenuItem Header="{Binding [EditConnections], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="EditConnections" InputGestureText="Ctrl+L"/>
+    <MenuItem Header="{Binding [RunMenu], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="RunMenu" InputGestureText="F5"/>
+    <MenuItem Header="{Binding [CancelMenu], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="CancelMenu" IsEnabled="False"/>
+    <Separator/><MenuItem Header="{Binding [CloseTab], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="CloseMenu" InputGestureText="Ctrl+W"/>
+    <MenuItem Header="{Binding [Exit], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="ExitMenu"/>
+   </MenuItem>
+   <MenuItem Header="{Binding [ViewMenu], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="ViewMenu"/>
+   <MenuItem Header="{Binding [SettingsMenu], Source={StaticResource UiStrings}, Mode=OneWay}"><MenuItem x:Name="OptionsMenu" Header="{Binding [OptionsMenu], Source={StaticResource UiStrings}, Mode=OneWay}"/></MenuItem>
+   <MenuItem Header="{Binding [NavMenu], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="NavMenu">
+    <MenuItem Header="{Binding [Overview], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="GoOverview" InputGestureText="Ctrl+1"/>
+    <MenuItem Header="{Binding [OpenObject], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="OpenMenu" InputGestureText="Enter"/>
+    <Separator/><MenuItem Header="{Binding [Previous], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="PrevMenu" InputGestureText="Shift+F7"/>
+    <MenuItem Header="{Binding [Next], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="NextMenu" InputGestureText="F7"/>
+   </MenuItem>
+  </Menu>
+  <Border x:Name="CompareToolbar" DockPanel.Dock="Top" Background="#FAFBFB" BorderBrush="#CDD8D9" BorderThickness="0,1,0,1" Padding="8,4">
+   <WrapPanel VerticalAlignment="Center">
+    <StackPanel x:Name="Modes" Orientation="Horizontal"/>
+    <StackPanel x:Name="OverviewTools" Orientation="Horizontal" Margin="8,0,0,0">
+     <Button x:Name="ExpandAll" Content="{Binding [Expand], Source={StaticResource UiStrings}, Mode=OneWay}" Padding="7,3"/><Button x:Name="CollapseAll" Content="{Binding [Collapse], Source={StaticResource UiStrings}, Mode=OneWay}" Margin="4,0,10,0" Padding="7,3"/>
+     <Label Content="{Binding [Find], Source={StaticResource UiStrings}, Mode=OneWay}" Target="{Binding ElementName=Search}" Padding="2,4"/>
+     <TextBox x:Name="Search" Width="135" Height="27" Padding="4,1" VerticalContentAlignment="Center"/>
+    </StackPanel>
+    <StackPanel x:Name="DetailTools" Orientation="Horizontal" Visibility="Collapsed" Margin="8,0">
+     <Button x:Name="PreviousDiff" Content="{Binding [PreviousButton], Source={StaticResource UiStrings}, Mode=OneWay}" ToolTip="Shift+F7" Padding="7,3"/>
+     <Button x:Name="NextDiff" Content="{Binding [NextButton], Source={StaticResource UiStrings}, Mode=OneWay}" ToolTip="F7" Padding="7,3" Margin="4,0"/>
+    </StackPanel>
+    <TextBlock x:Name="Tally" Margin="10,0" Foreground="#59696B" VerticalAlignment="Center"/>
+   </WrapPanel>
+  </Border>
+  <Border x:Name="StatusArea" DockPanel.Dock="Bottom" Padding="16,5">
+   <Border.Style><Style TargetType="Border"><Setter Property="Background" Value="#E9EFF0"/></Style></Border.Style>
+   <DockPanel><ProgressBar x:Name="RunProgress" Width="64" Height="6" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+    <TextBlock x:Name="StatusBar" Text="{Binding [Ready], Source={StaticResource UiStrings}, Mode=OneWay}" Foreground="#466063" TextWrapping="Wrap"/>
+   </DockPanel>
+  </Border>
+  <TabControl x:Name="Pages" Margin="4,3,4,0" Padding="0" Background="White" BorderBrush="#CDD8D9">
+   <TabItem x:Name="Home" Header="{Binding [Home], Source={StaticResource UiStrings}, Mode=OneWay}" IsSelected="True" Padding="16,4">
+    <Grid>
+     <Grid.ColumnDefinitions><ColumnDefinition Width="2*" MinWidth="245"/><ColumnDefinition Width="4"/><ColumnDefinition Width="3*" MinWidth="300"/></Grid.ColumnDefinitions>
+     <DockPanel Background="#E5EAF0">
+      <Border DockPanel.Dock="Top" Background="#EDF0F3" BorderBrush="#BFC7CF" BorderThickness="0,0,0,1" Padding="10,6"><TextBlock Text="{Binding [Sessions], Source={StaticResource UiStrings}, Mode=OneWay}" FontWeight="SemiBold"/></Border>
+      <DockPanel DockPanel.Dock="Bottom" Background="#F3F4F6" Margin="3">
+       <Button x:Name="AddSession" Content="＋" ToolTip="{Binding [NewComparison], Source={StaticResource UiStrings}, Mode=OneWay}" Padding="7,2"/>
+       <Button x:Name="DeleteHistory" Content="−" ToolTip="{Binding [DeleteSelected], Source={StaticResource UiStrings}, Mode=OneWay}" Padding="7,2" Margin="3,0,6,0"/>
+       <Border Background="White" BorderBrush="#ADB7BF" BorderThickness="1" Padding="5,1">
+        <DockPanel><Path Data="M9,9 L14,14 M11,6 A5,5 0 1 1 1,6 A5,5 0 1 1 11,6" Stroke="#647581" StrokeThickness="1.6" Width="16" Height="16" VerticalAlignment="Center"/>
+         <TextBox x:Name="HistorySearch" Padding="5,2" BorderThickness="0" ToolTip="{Binding [SearchHistory], Source={StaticResource UiStrings}, Mode=OneWay}" VerticalContentAlignment="Center"/>
+        </DockPanel>
+       </Border>
+      </DockPanel>
+      <TreeView x:Name="HistoryTree" Background="Transparent" BorderThickness="0" Padding="4,6"/>
+     </DockPanel>
+     <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch" Background="#CDD3D8"/>
+     <Grid Grid.Column="2" Background="#FAFAFA">
+      <StackPanel x:Name="Launcher" HorizontalAlignment="Center" VerticalAlignment="Center">
+       <TextBlock Text="{Binding [NewComparison], Source={StaticResource UiStrings}, Mode=OneWay}" HorizontalAlignment="Center" FontSize="17" Margin="0,0,0,18"/>
+       <Button x:Name="NewComparison" Background="Transparent" BorderThickness="0" Padding="18,8" ToolTip="{Binding [NewSql], Source={StaticResource UiStrings}, Mode=OneWay}">
+        <StackPanel>
+         <Viewbox Height="68"><Canvas Width="86" Height="64">
+          <Path Stroke="#A77D33" StrokeThickness="1.4" Fill="#F3D99B" Data="M3,14 Q3,8 21,8 Q39,8 39,14 L39,41 Q39,47 21,47 Q3,47 3,41 Z M3,14 C3,22 39,22 39,14 M3,26 C3,34 39,34 39,26"/>
+          <Path Stroke="#527687" StrokeThickness="1.4" Fill="#CEE4EC" Data="M46,23 Q46,17 64,17 Q82,17 82,23 L82,50 Q82,56 64,56 Q46,56 46,50 Z M46,23 C46,31 82,31 82,23 M46,35 C46,43 82,43 82,35"/>
+          <Path Stroke="#345F6B" StrokeThickness="2.5" Data="M21,49 L44,49 M39,44 L44,49 L39,54 M56,10 L35,10 M40,5 L35,10 L40,15"/>
+         </Canvas></Viewbox>
+         <TextBlock Text="{Binding [SqlCompare], Source={StaticResource UiStrings}, Mode=OneWay}" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+        </StackPanel>
+       </Button>
+      </StackPanel>
+      <StackPanel x:Name="HistoryInfo" Visibility="Collapsed" VerticalAlignment="Center" Margin="36">
+       <TextBlock x:Name="HistoryTitle" FontSize="21" FontWeight="SemiBold" TextWrapping="Wrap"/>
+       <StackPanel x:Name="RenameForm" Visibility="Collapsed">
+        <Label Content="{Binding [SavedName], Source={StaticResource UiStrings}, Mode=OneWay}" Target="{Binding ElementName=SavedName}" Padding="0,0,0,4"/>
+        <TextBox x:Name="SavedName" MaxLength="160" Padding="5,3"/>
+        <WrapPanel Margin="0,6,0,0"><Button x:Name="SaveName" Content="{Binding [Save], Source={StaticResource UiStrings}, Mode=OneWay}"/><Button x:Name="CancelRename" Content="{Binding [Cancel], Source={StaticResource UiStrings}, Mode=OneWay}" Margin="6,0,0,0"/></WrapPanel>
+       </StackPanel>
+       <TextBlock x:Name="HistoryTime" Margin="0,5,0,18" Foreground="#556674"/>
+       <TextBlock x:Name="HistorySides" TextWrapping="Wrap" LineHeight="24"/>
+       <TextBlock x:Name="HistorySummary" Margin="0,8,0,16"/>
+       <WrapPanel><Button x:Name="OpenHistory" Content="{Binding [OpenHistory], Source={StaticResource UiStrings}, Mode=OneWay}" Background="#215D58" Foreground="White"/><Button x:Name="RerunHistory" Content="{Binding [Rerun], Source={StaticResource UiStrings}, Mode=OneWay}" Margin="8,0,0,0"/></WrapPanel>
+      </StackPanel>
+      <TextBlock x:Name="HistoryNotice" Margin="14" VerticalAlignment="Bottom" Foreground="#805017" TextWrapping="Wrap"/>
+     </Grid>
+    </Grid>
+   </TabItem>
+  </TabControl>
+ </DockPanel>
+</Window>

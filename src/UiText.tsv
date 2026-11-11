@@ -1,0 +1,210 @@
+DBCompare · SQL Server 结构比较	DBCompare · SQL Server 構造比較	DBCompare · SQL Server Schema Compare	WindowTitle
+数据库连接	データベース接続	Database connections	Connections
+比较名称	比較名	Comparison name	ComparisonName
+留空时按数据库名称自动命名	空欄の場合はデータベース名から自動生成します	Leave blank to use the database names	NameHint
+左侧连接字符串	左側の接続文字列	Left connection string	LeftConnection
+右侧连接字符串	右側の接続文字列	Right connection string	RightConnection
+Server=服务器;Database=库名;Integrated Security=True;	Server=サーバー名;Database=データベース名;Integrated Security=True;	Server=server;Database=database;Integrated Security=True;	LeftExample
+Server=服务器;Database=库名;User ID=账号;Password=密码;	Server=サーバー名;Database=データベース名;User ID=ユーザー名;Password=パスワード;	Server=server;Database=database;User ID=user;Password=password;	RightExample
+开始比较	比較開始	Start comparison	Start
+取消	キャンセル	Cancel	Cancel
+左侧对象	左側のオブジェクト	Left object	LeftObject
+右侧对象	右側のオブジェクト	Right object	RightObject
+比较结果	比較結果	Result	Result
+差异内容	差異の詳細	Changes	Changes
+等待比较	比較待ち	Ready to compare	Waiting
+在上方粘贴两个库的连接字符串，然后点击「开始比较」。	上に両方の接続文字列を貼り付け、「比較開始」をクリックしてください。	Paste both connection strings above, then click Start comparison.	WaitingHint
+会话(_S)	セッション(_S)	_Session	SessionMenu
+主页	ホーム	Home	Home
+新建比较	新しい比較	New comparison	NewComparison
+编辑连接(_L)	接続の編集(_L)	Edit _connections	EditConnections
+开始比较(_R)	比較開始(_R)	_Run comparison	RunMenu
+取消比较	比較をキャンセル	Cancel comparison	CancelMenu
+关闭当前标签	現在のタブを閉じる	Close current tab	CloseTab
+退出	終了	Exit	Exit
+视图(_V)	表示(_V)	_View	ViewMenu
+导航(_N)	移動(_N)	_Navigate	NavMenu
+比较总览	比較の概要	Comparison overview	Overview
+打开选中对象	選択したオブジェクトを開く	Open selected object	OpenObject
+上一处差异	前の差異	Previous difference	Previous
+下一处差异	次の差異	Next difference	Next
+展开全部	すべて展開	Expand all	Expand
+折叠全部	すべて折りたたむ	Collapse all	Collapse
+查找	検索	Find	Find
+↑ 上一处	↑ 前へ	↑ Previous	PreviousButton
+↓ 下一处	↓ 次へ	↓ Next	NextButton
+就绪	準備完了	Ready	Ready
+会话	セッション	Sessions	Sessions
+删除选中的履历	選択した履歴を削除	Delete selected history entry	DeleteSelected
+查找比较名称、服务器或库名	比較名、サーバー名、データベース名で検索	Find a comparison, server or database	SearchHistory
+新建 SQL Server 比较	SQL Server の比較を開始	Start a SQL Server comparison	NewSql
+SQL Server 结构比较	SQL Server 構造比較	SQL Server schema comparison	SqlCompare
+保存名称	保存名	Saved name	SavedName
+保存	保存	Save	Save
+查看当时结果	保存時の結果を表示	View saved results	OpenHistory
+重新比较	再比較	Compare again	Rerun
+设定(_T)	設定(_T)	Se_ttings	SettingsMenu
+选项…	オプション…	Options…	OptionsMenu
+选项	オプション	Options
+共通设定	共通設定	General
+语言	言語	Language
+确定	OK	OK
+保存语言设定失败：{0}	言語設定を保存できませんでした：{0}	Could not save the language setting: {0}
+全部	すべて	All
+不同	相違	Different
+相同	一致	Same
+仅左侧	左側のみ	Left only
+仅右侧	右側のみ	Right only
+全部显示	すべて表示	Show all
+只显示不同	差異のみ表示	Show differences
+只显示相同	一致のみ表示	Show matches
+仅左侧存在	左側のみ表示	Show left only
+仅右侧存在	右側のみ表示	Show right only
+关闭标签 (Ctrl+W)	タブを閉じる (Ctrl+W)	Close tab (Ctrl+W)
+匹配 {0} / {1} 项	該当 {0} / {1} 件	Showing {0} of {1}
+F7 下一处差异     Shift+F7 上一处差异     Ctrl+1 返回所属比较	F7 次の差異     Shift+F7 前の差異     Ctrl+1 比較に戻る	F7 Next difference     Shift+F7 Previous difference     Ctrl+1 Back to comparison
+{0} 项	{0} 件	{0} items
+表	テーブル	Tables
+视图	ビュー	Views
+存储过程	ストアドプロシージャ	Stored procedures
+函数	関数	Functions
+触发器	トリガー	Triggers
+数据库触发器	データベーストリガー	Database triggers
+仅格式不同	書式のみ異なる	Formatting only
+内容不同	内容が異なる	Content changed
+定义不可读	定義を取得できません	Definition unavailable
+对象存在性	オブジェクトの有無	Object presence
+{0} 项属性	{0} 件の属性	Properties changed: {0}
+SQL 定义	SQL 定義	SQL definition
+缩进 / 空白 / 换行	インデント / 空白 / 改行	Whitespace changes
+一致	一致	Identical
+请输入两个数据库的连接字符串。	両方のデータベースの接続文字列を入力してください。	Enter connection strings for both databases.
+新比较 {0}	新しい比較 {0}	New comparison {0}
+数据库中没有可比较的对象	比較できるオブジェクトがありません	No objects to compare
+没有匹配的对象	該当するオブジェクトがありません	No matching objects
+可以切换顶部显示条件，或修改查找内容。	上部の表示条件または検索内容を変更してください。	Change the filter above or edit the search text.
+请检查连接字符串的格式、Server 和 Database。	接続文字列の形式と Server、Database を確認してください。	Check the connection string syntax, Server and Database.
+读取数据库结构失败（{0}）。	データベース構造の読み取りに失敗しました（{0}）。	Could not read the database schema ({0}).
+当前账号缺少数据库级 VIEW DEFINITION 权限。	現在のユーザーにはデータベースの VIEW DEFINITION 権限がありません。	The account lacks database-level VIEW DEFINITION permission.
+登录失败，请检查身份验证方式和凭据。	ログインに失敗しました。認証方法と資格情報を確認してください。	Login failed. Check the authentication method and credentials.
+无法打开指定数据库，请检查库名和访问权限。	指定のデータベースを開けません。名前とアクセス権を確認してください。	Cannot open the database. Check its name and access permissions.
+操作超时，请检查网络或稍后重试。	タイムアウトしました。ネットワークを確認するか、後で再試行してください。	The operation timed out. Check the network or try again later.
+SQL Server 错误 {0}：{1}	SQL Server エラー {0}：{1}	SQL Server error {0}: {1}
+{0}：{1}	{0}：{1}	{0}: {1}
+左侧	左側	Left
+右侧	右側	Right
+请输入{0}数据库的连接字符串。	{0}のデータベースの接続文字列を入力してください。	Enter the connection string for the {0} database.
+这条旧履历未保存登录密码，请补全{0}连接字符串中的 Password 后开始比较。	この履歴にはパスワードがありません。{0}の接続文字列に Password を入力してください。	This older entry has no saved password. Add Password to the {0} connection string before comparing.
+正在读取两个数据库的结构…	両方のデータベース構造を読み取り中…	Reading both database schemas…
+已读取两侧数据库，正在比较结构…	読み取り完了。データベース構造を比較中…	Both schemas loaded. Comparing…
+履历保存失败：{0}	履歴の保存に失敗しました：{0}	Could not save history: {0}
+比较已取消。	比較をキャンセルしました。	Comparison canceled.
+比较失败。{0}	比較に失敗しました。{0}	Comparison failed. {0}
+下方保留上次比较结果。	前回の比較結果を表示しています。	Previous results are still displayed.
+读取快照中…	スナップショット読み取り中…	Loading snapshot…
+比较中…	比較中…	Comparing…
+正在读取历史快照…	履歴のスナップショットを読み取り中…	Reading saved snapshot…
+无法打开历史快照：{0}	履歴のスナップショットを開けません：{0}	Could not open saved snapshot: {0}
+历史快照	履歴スナップショット	Saved snapshot
+比较完成	比較完了	Comparison complete
+共 {0} 个对象   ·   {1} 项不同   ·   {2} 项相同	全 {0} 件   ·   相違 {1} 件   ·   一致 {2} 件	Objects: {0}   ·   Different: {1}   ·   Identical: {2}
+{0} 项无法判定	判定不能 {0} 件	{0} undetermined
+双击对象查看明细	ダブルクリックで詳細を表示	Double-click an object for details
+格式差异	書式の差異	Formatting
+内容差异	内容の差異	Content
+部分定义不可读（可能已加密或权限受限）。下方仅显示已读取的内容。	一部の定義を取得できません（暗号化または権限不足）。取得できた内容を表示します。	Some definitions are unavailable due to encryption or permissions. Available content is shown below.
+结构属性	構造の属性	Schema properties
+匹配 {0} / {1} 项属性	該当する属性 {0} / {1} 件	Showing {0} of {1} properties
+当前行对照	選択行の比較	Selected line comparison
+无此对象	オブジェクトなし	Object absent
+{0} 处差异   ·   {1} / {2} 行	差異 {0} 箇所   ·   {1} / {2} 行	Difference blocks: {0}   ·   {1} / {2} lines
+定义不完整，无法比较	定義が不完全なため比較できません	Incomplete definition; comparison unavailable
+左	左	Left
+右	右	Right
+点击定位到对应行	クリックして該当行へ移動	Click to go to the corresponding line
+删除「{0}」在 {1} 的履历及结构快照？	「{0}」の {1} の履歴とスナップショットを削除しますか？	Delete the history entry and snapshot for “{0}” from {1}?
+删除履历	履歴の削除	Delete history entry
+删除	削除	Delete
+删除失败：{0}	削除に失敗しました：{0}	Delete failed: {0}
+重命名失败：{0}	名前の変更に失敗しました：{0}	Rename failed: {0}
+重命名…	名前の変更…	Rename…
+删除履历…	履歴を削除…	Delete history entry…
+{0} 条履历无法读取。	{0} 件の履歴を読み取れません。	Could not read {0} history entries.
+履历读取失败：{0}	履歴を読み取れません：{0}	Could not read history: {0}
+新建	新規	New
+自动保存	自動保存	Auto-saved
+今天	今日	Today
+昨天	昨日	Yesterday
+暂无比较履历	比較履歴はまだありません	No comparison history yet
+没有匹配的履历	該当する履歴がありません	No matching history
+{0} 个对象	{0} 個のオブジェクト	Objects: {0}
+{0} 项不同	相違 {0} 件	{0} different
+已带入履历设置。点击「开始比较」读取两个数据库的最新结构。	履歴の設定を読み込みました。「比較開始」で最新の構造を読み取ります。	Saved settings loaded. Click Start comparison to read the latest schemas.
+无效的履历计数。	履歴の件数が無効です。	Invalid history count.
+无法识别履历。	履歴を認識できません。	Unrecognized history file.
+无法识别履历版本。	履歴のバージョンを認識できません。	Unsupported history version.
+履历包含多余的数据。	履歴に余分なデータがあります。	Unexpected data in the history file.
+请输入保存名称。	保存名を入力してください。	Enter a name for this entry.
+连接字符串需要包含 Server 和 Database（或 Initial Catalog）。	接続文字列に Server と Database（または Initial Catalog）が必要です。	The connection string requires Server and Database (or Initial Catalog).
+请连接已存在的数据库实例。	既存のデータベースインスタンスに接続してください。	Connect to an existing database instance.
+元数据结果集不完整。	メタデータの結果セットが不完全です。	The metadata result set is incomplete.
+对象	オブジェクト	Object
+类型	種類	Type
+模块	モジュール	Module
+内存优化	メモリ最適化	Memory optimized
+持久性	持続性	Durability
+执行身份	実行ユーザー	Execution context
+已禁用	無効	Disabled
+所属架构	親スキーマ	Parent schema
+所属对象	親オブジェクト	Parent object
+字段	列	Column
+列序	列の順序	Column position
+数据类型	データ型	Data type
+最大长度 (字节)	最大長 (バイト)	Maximum length (bytes)
+精度	精度	Precision
+小数位	小数点以下の桁数	Scale
+允许 NULL	NULL 許容	Allow NULL
+排序规则	照合順序	Collation
+稀疏列	スパース列	Sparse column
+列集	列セット	Column set
+标识列	IDENTITY 列	Identity column
+标识种子	シード値	Identity seed
+标识增量	増分値	Identity increment
+计算列	計算列	Computed column
+计算表达式	計算式	Computed expression
+持久化	永続化	Persisted
+默认约束名	既定制約名	Default constraint name
+默认值	既定値	Default value
+XML 架构集合	XML スキーマコレクション	XML schema collection
+索引	インデックス	Index
+唯一	一意	Unique
+主键	主キー	Primary key
+唯一约束	一意制約	Unique constraint
+过滤索引	フィルター選択インデックス	Filtered index
+过滤条件	フィルター条件	Filter predicate
+忽略重复键	重複キーを無視	Ignore duplicate keys
+填充因子	フィルファクター	Fill factor
+行锁	行ロック	Row locks
+页锁	ページロック	Page locks
+桶数	バケット数	Bucket count
+列	列	Column
+键顺序	キーの順序	Key position
+降序	降順	Descending
+包含列	付加列	Included column
+分区序号	パーティションの順序	Partition position
+外键	外部キー	Foreign key
+引用架构	参照先スキーマ	Referenced schema
+引用表	参照先テーブル	Referenced table
+删除规则	削除規則	Delete rule
+更新规则	更新規則	Update rule
+未受信任	信頼されていない	Untrusted
+本列	参照元の列	Referencing column
+引用列	参照先の列	Referenced column
+检查约束	CHECK 制約	Check constraint
+条件	条件	Condition
+绑定列	対象列	Bound column
+触发事件	トリガーイベント	Trigger event
+首先执行	最初に実行	Fires first
+最后执行	最後に実行	Fires last
+是	はい	Yes
+否	いいえ	No
