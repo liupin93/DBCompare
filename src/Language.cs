@@ -134,7 +134,7 @@ namespace DBCompare {
         static readonly HashSet<string> flags=new HashSet<string>(StringComparer.Ordinal) {
             "内存优化","ANSI_NULLS","QUOTED_IDENTIFIER","SCHEMABINDING","已禁用","INSTEAD OF","NOT FOR REPLICATION","允许 NULL","ROWGUIDCOL",
             "稀疏列","列集","FILESTREAM","ANSI_PADDING","标识列","计算列","持久化","XML DOCUMENT","唯一","主键","唯一约束","过滤索引",
-            "忽略重复键","PAD_INDEX","行锁","页锁","降序","包含列","未受信任","首先执行","最后执行"
+            "忽略重复键","PAD_INDEX","行锁","页锁","降序","包含列","未受信任","首先执行","最后执行","序列循环","已验证","可延迟","初始延迟"
         };
         public static string PropertyValue(string key,string value) {
             if(value!="是" && value!="否") return value;

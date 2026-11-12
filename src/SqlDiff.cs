@@ -41,10 +41,73 @@ namespace DBCompare {
             }
             return tokens;
         }
-        public static string Classify(string a,string b) {
+        static bool PgLetter(char c) {return c=='_' || Char.IsLetter(c) || c>=128;}
+        static readonly Regex DollarTag=new Regex(@"\G\$(?:[\p{L}_\u0080-\uFFFF][\p{L}\p{Nd}_\u0080-\uFFFF]*)?\$",RegexOptions.Compiled);
+        static readonly Regex PgNumber=new Regex(@"\G(?:0[xX](?:_?[0-9a-fA-F])+|0[bB](?:_?[01])+|0[oO](?:_?[0-7])+|(?:[0-9](?:_?[0-9])*(?:\.(?!\.)(?:[0-9](?:_?[0-9])*)?)?|\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?)",RegexOptions.Compiled);
+        const string PgOperators="+-*/<>=~!@#%^&|\x60?";
+        static List<Token> PgTokens(string s,bool routineBody) {
+            var tokens=new List<Token>();
+            for(int i=0;i<s.Length;) {
+                int start=i;
+                char c=s[i++],n=i<s.Length?s[i]:'\0';
+                if(Char.IsWhiteSpace(c)) continue;
+                if(c=='-' && n=='-') {
+                    while(i<s.Length && s[i]!='\r' && s[i]!='\n') i++;
+                } else if(c=='/' && n=='*') {
+                    i++;int depth=1;
+                    while(i<s.Length && depth>0) {
+                        if(i+1<s.Length && s[i]=='/' && s[i+1]=='*') {depth++;i+=2;}
+                        else if(i+1<s.Length && s[i]=='*' && s[i+1]=='/') {depth--;i+=2;}
+                        else i++;
+                    }
+                } else if(c=='$') {
+                    var tag=DollarTag.Match(s,start);
+                    if(tag.Success) {
+                        int body=start+tag.Length;
+                        int close=s.IndexOf(tag.Value,body,StringComparison.Ordinal);
+                        if(close>=0 && routineBody && tokens.Count>0 && String.Equals(tokens[tokens.Count-1].Text,"AS",StringComparison.OrdinalIgnoreCase)) {
+                            tokens.Add(new Token{Start=start,End=body,Text=tag.Value});
+                            foreach(var part in PgTokens(s.Substring(body,close-body),false)) {
+                                part.Start+=body;part.End+=body;tokens.Add(part);
+                            }
+                            start=close;
+                        }
+                        i=close<0?s.Length:close+tag.Length;
+                    } else while(i<s.Length && Char.IsDigit(s[i])) i++;
+                } else if(c=='\'' || c=='"' || ("eEbBxXnN".IndexOf(c)>=0 && n=='\'') ||
+                        ((c=='u'||c=='U') && n=='&' && i+1<s.Length && (s[i+1]=='\''||s[i+1]=='"'))) {
+                    bool escaped=c=='e'||c=='E';
+                    char quote=c;
+                    if(quote!='\'' && quote!='"') {if(n=='&') i++;quote=s[i++];}
+                    while(i<s.Length) {
+                        char ch=s[i++];
+                        if(escaped && ch=='\\' && i<s.Length) i++;
+                        else if(ch==quote) {if(i<s.Length && s[i]==quote) i++;else break;}
+                    }
+                } else if(PgLetter(c)) {
+                    while(i<s.Length && (PgLetter(s[i]) || Char.IsDigit(s[i]) || s[i]=='$')) i++;
+                } else if((c>='0' && c<='9') || (c=='.' && n>='0' && n<='9')) {
+                    i=start+PgNumber.Match(s,start).Length;
+                } else if(PgOperators.IndexOf(c)>=0) {
+                    while(i<s.Length && PgOperators.IndexOf(s[i])>=0) {
+                        if(i+1<s.Length && ((s[i]=='-' && s[i+1]=='-')||(s[i]=='/' && s[i+1]=='*'))) break;
+                        i++;
+                    }
+                    if(i-start>1 && (s[i-1]=='-' || s[i-1]=='+') && s.IndexOfAny(PgSpecialOperatorChars,start,i-start)<0)
+                        while(i-start>1 && (s[i-1]=='-' || s[i-1]=='+')) i--;
+                } else if((c==':' && (n==':' || n=='=')) || (c=='.' && n=='.')) i++;
+                tokens.Add(new Token{Start=start,End=i,Text=s.Substring(start,i-start)});
+            }
+            return tokens;
+        }
+        static readonly char[] PgSpecialOperatorChars="~!@#%^&|\x60?".ToCharArray();
+        static List<Token> Tokens(string text,DatabaseEngine engine,bool routineBody) {
+            return engine==DatabaseEngine.PostgreSql?PgTokens(text,routineBody):Lex(text);
+        }
+        public static string Classify(string a,string b,DatabaseEngine engine=DatabaseEngine.SqlServer,bool routineBody=false) {
             if(a==b) return Result.Same;
             if(a==null || b==null) return Result.Changed;
-            return Lex(a).Select(x=>x.Text).SequenceEqual(Lex(b).Select(x=>x.Text),StringComparer.Ordinal) ? Result.Format : Result.Changed;
+            return Tokens(a,engine,routineBody).Select(x=>x.Text).SequenceEqual(Tokens(b,engine,routineBody).Select(x=>x.Text),StringComparer.Ordinal) ? Result.Format : Result.Changed;
         }
         // Trim shared ends. Exact LCS for normal edit regions, bounded memory for large rewrites.
         static List<Tuple<int,int>> Matches(string[] a,string[] b) {
@@ -141,11 +204,11 @@ namespace DBCompare {
                 while(ai<az && bi<bz && a[az-1]==b[bz-1] && Char.IsWhiteSpace(a[az-1])) {ac[--az]=0;bc[--bz]=0;}
             }
         }
-        public static List<Pair> Detail(string left,string right) {
+        public static List<Pair> Detail(string left,string right,DatabaseEngine engine=DatabaseEngine.SqlServer,bool routineBody=false) {
             string a=left??"", b=right??"";
             byte[] ac=Enumerable.Repeat((byte)2,a.Length).ToArray(),bc=Enumerable.Repeat((byte)2,b.Length).ToArray();
             if(left!=null && right!=null) {
-                var at=Lex(a); var bt=Lex(b);
+                var at=Tokens(a,engine,routineBody); var bt=Tokens(b,engine,routineBody);
                 int lastA=-1,lastB=-1;
                 foreach(var p in Matches(at.Select(t=>t.Text).ToArray(),bt.Select(t=>t.Text).ToArray())) {
                     var x=at[p.Item1]; var y=bt[p.Item2];

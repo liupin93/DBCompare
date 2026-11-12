@@ -74,6 +74,16 @@
    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"/>
    <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="#DDEEEE"/></Trigger></Style.Triggers>
   </Style>
+  <DataTemplate x:Key="LauncherTile">
+    <StackPanel>
+         <Viewbox Height="68"><Canvas Width="86" Height="64">
+          <Path Stroke="#A77D33" StrokeThickness="1.4" Fill="#F3D99B" Data="M3,14 Q3,8 21,8 Q39,8 39,14 L39,41 Q39,47 21,47 Q3,47 3,41 Z M3,14 C3,22 39,22 39,14 M3,26 C3,34 39,34 39,26"/>
+          <Path Stroke="#527687" StrokeThickness="1.4" Fill="#CEE4EC" Data="M46,23 Q46,17 64,17 Q82,17 82,23 L82,50 Q82,56 64,56 Q46,56 46,50 Z M46,23 C46,31 82,31 82,23 M46,35 C46,43 82,43 82,35"/>
+          <Path Stroke="#345F6B" StrokeThickness="2.5" Data="M21,49 L44,49 M39,44 L44,49 L39,54 M56,10 L35,10 M40,5 L35,10 L40,15"/>
+         </Canvas></Viewbox>
+         <TextBlock Text="{Binding}" HorizontalAlignment="Center" Margin="0,7,0,0"/>
+        </StackPanel>
+  </DataTemplate>
   <DataTemplate x:Key="ComparisonView">
 <DockPanel>
      <Expander x:Name="Connections" Header="{Binding [Connections], Source={StaticResource UiStrings}, Mode=OneWay}" IsExpanded="True" DockPanel.Dock="Top" Margin="14,10,14,8">
@@ -125,6 +135,35 @@
      </Grid>
     </DockPanel>
   </DataTemplate>
+  <Style x:Key="HelpHeading" TargetType="TextBlock">
+   <Setter Property="FontSize" Value="16"/><Setter Property="FontWeight" Value="SemiBold"/>
+   <Setter Property="Margin" Value="0,0,0,4"/>
+  </Style>
+  <Style x:Key="HelpParagraph" TargetType="TextBlock">
+   <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,0,0,16"/>
+  </Style>
+  <DataTemplate x:Key="HelpContentView">
+   <StackPanel>
+    <TextBlock Style="{StaticResource HelpHeading}" Text="{Binding [NewComparison], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpParagraph}" Text="{Binding [HelpConnect], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpHeading}" Text="{Binding [Overview], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpParagraph}" Text="{Binding [HelpOverview], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpHeading}" Text="{Binding [HelpDetailsHeading], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpParagraph}" Text="{Binding [HelpReadDiff], Source={StaticResource UiStrings}}"/>
+    <TextBlock Style="{StaticResource HelpHeading}" Text="{Binding [HelpHistoryHeading], Source={StaticResource UiStrings}}"/>
+    <TextBlock TextWrapping="Wrap" Text="{Binding [HelpHistory], Source={StaticResource UiStrings}}"/>
+   </StackPanel>
+  </DataTemplate>
+  <DataTemplate x:Key="AboutView">
+   <StackPanel>
+    <TextBlock Text="DBCompare" FontSize="26" FontWeight="SemiBold"/>
+    <TextBlock Margin="0,6,0,18" TextWrapping="Wrap" Text="{Binding [AboutDescription], Source={StaticResource UiStrings}}"/>
+    <StackPanel Orientation="Horizontal">
+     <TextBlock Foreground="#466063" Text="{Binding [AboutCredit], Source={StaticResource UiStrings}}"/>
+     <TextBlock Text="liu pin" FontWeight="SemiBold" Margin="12,0,0,0"/>
+    </StackPanel>
+   </StackPanel>
+  </DataTemplate>
  </Window.Resources>
  <DockPanel Background="#F3F5F7">
   <Menu DockPanel.Dock="Top" Background="#F5F7F7" Padding="8,2">
@@ -144,6 +183,10 @@
     <MenuItem Header="{Binding [OpenObject], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="OpenMenu" InputGestureText="Enter"/>
     <Separator/><MenuItem Header="{Binding [Previous], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="PrevMenu" InputGestureText="Shift+F7"/>
     <MenuItem Header="{Binding [Next], Source={StaticResource UiStrings}, Mode=OneWay}" x:Name="NextMenu" InputGestureText="F7"/>
+   </MenuItem>
+   <MenuItem Header="{Binding [HelpMenu], Source={StaticResource UiStrings}}" x:Name="HelpMenu">
+    <MenuItem Header="{Binding [HelpContents], Source={StaticResource UiStrings}}" x:Name="HelpContentsMenu"/>
+    <MenuItem Header="{Binding [About], Source={StaticResource UiStrings}}" x:Name="AboutMenu"/>
    </MenuItem>
   </Menu>
   <Border x:Name="CompareToolbar" DockPanel.Dock="Top" Background="#FAFBFB" BorderBrush="#CDD8D9" BorderThickness="0,1,0,1" Padding="8,4">
@@ -188,16 +231,10 @@
      <Grid Grid.Column="2" Background="#FAFAFA">
       <StackPanel x:Name="Launcher" HorizontalAlignment="Center" VerticalAlignment="Center">
        <TextBlock Text="{Binding [NewComparison], Source={StaticResource UiStrings}, Mode=OneWay}" HorizontalAlignment="Center" FontSize="17" Margin="0,0,0,18"/>
-       <Button x:Name="NewComparison" Background="Transparent" BorderThickness="0" Padding="18,8" ToolTip="{Binding [NewSql], Source={StaticResource UiStrings}, Mode=OneWay}">
-        <StackPanel>
-         <Viewbox Height="68"><Canvas Width="86" Height="64">
-          <Path Stroke="#A77D33" StrokeThickness="1.4" Fill="#F3D99B" Data="M3,14 Q3,8 21,8 Q39,8 39,14 L39,41 Q39,47 21,47 Q3,47 3,41 Z M3,14 C3,22 39,22 39,14 M3,26 C3,34 39,34 39,26"/>
-          <Path Stroke="#527687" StrokeThickness="1.4" Fill="#CEE4EC" Data="M46,23 Q46,17 64,17 Q82,17 82,23 L82,50 Q82,56 64,56 Q46,56 46,50 Z M46,23 C46,31 82,31 82,23 M46,35 C46,43 82,43 82,35"/>
-          <Path Stroke="#345F6B" StrokeThickness="2.5" Data="M21,49 L44,49 M39,44 L44,49 L39,54 M56,10 L35,10 M40,5 L35,10 L40,15"/>
-         </Canvas></Viewbox>
-         <TextBlock Text="{Binding [SqlCompare], Source={StaticResource UiStrings}, Mode=OneWay}" HorizontalAlignment="Center" Margin="0,7,0,0"/>
-        </StackPanel>
-       </Button>
+       <WrapPanel HorizontalAlignment="Center">
+        <Button x:Name="NewComparison" Background="Transparent" BorderThickness="0" Padding="12,8" ContentTemplate="{StaticResource LauncherTile}" Content="{Binding [SqlCompare], Source={StaticResource UiStrings}, Mode=OneWay}"/>
+        <Button x:Name="NewPostgres" Background="Transparent" BorderThickness="0" Padding="12,8" ContentTemplate="{StaticResource LauncherTile}" Content="{Binding [PgCompare], Source={StaticResource UiStrings}, Mode=OneWay}"/>
+       </WrapPanel>
       </StackPanel>
       <StackPanel x:Name="HistoryInfo" Visibility="Collapsed" VerticalAlignment="Center" Margin="36">
        <TextBlock x:Name="HistoryTitle" FontSize="21" FontWeight="SemiBold" TextWrapping="Wrap"/>

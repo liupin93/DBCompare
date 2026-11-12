@@ -7,6 +7,7 @@ using System.Text;
 
 namespace DBCompare {
     internal sealed class HistoryEntry {
+        public DatabaseEngine Engine {get;internal set;}
         internal string Path, LeftConnection, RightConnection;
         internal bool LeftNeedsPassword, RightNeedsPassword;
         public DateTime CompletedUtc { get; internal set; }
@@ -28,13 +29,14 @@ namespace DBCompare {
     // Each completed run is a separate file. The home page reads only its header.
     internal sealed class HistoryStore {
         readonly string folder;
-        const int Version=3;
+        const int Version=4;
         public HistoryStore(string folder) { this.folder=folder; }
         public static string DefaultFolder {
             get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"DBCompare","History"); }
         }
         public HistoryEntry Save(Snapshot left,Snapshot right,List<Result> results,string ca,string cb,string name=null) {
-            var entry=new HistoryEntry {CompletedUtc=DateTime.UtcNow,LeftName=left.Name,RightName=right.Name,
+            if(left.Engine!=right.Engine) throw new InvalidOperationException(L.T("数据库类型不匹配。"));
+            var entry=new HistoryEntry {Engine=left.Engine,CompletedUtc=DateTime.UtcNow,LeftName=left.Name,RightName=right.Name,
                 Total=results.Count,Different=results.Count(r=>App.MatchMode(r.Status,"不同")),Unreadable=results.Count(r=>r.Status==Result.Unknown)};
             entry.Name=String.IsNullOrWhiteSpace(name)?HistoryEntry.PairName(left.Name,right.Name):name;
             entry.LeftConnection=ca;entry.RightConnection=cb;
@@ -54,12 +56,13 @@ namespace DBCompare {
         }
         static void WriteHeader(Stream stream,HistoryEntry entry) {
             // Version 3 retains the missing-password flags when naming an older snapshot.
-            int version=entry.LeftNeedsPassword || entry.RightNeedsPassword?Version:2;
+            int version=entry.Engine!=DatabaseEngine.SqlServer?Version:entry.LeftNeedsPassword || entry.RightNeedsPassword?3:2;
             using(var w=new BinaryWriter(stream,Encoding.UTF8,true)) {
                 w.Write("DBCompare");w.Write(version);w.Write(entry.CompletedUtc.Ticks);
                 w.Write(entry.LeftName);w.Write(entry.RightName);w.Write(entry.Total);w.Write(entry.Different);w.Write(entry.Unreadable);
                 w.Write(entry.LeftConnection);w.Write(entry.RightConnection);w.Write(entry.Name);
                 if(version==3) {w.Write(entry.LeftNeedsPassword);w.Write(entry.RightNeedsPassword);}
+                if(version==4) w.Write((byte)entry.Engine);
             }
         }
         static void WriteObjects(BinaryWriter w,Snapshot snapshot) {
@@ -76,8 +79,8 @@ namespace DBCompare {
             if(count<0) throw new InvalidDataException("无效的履历计数。");
             return count;
         }
-        static Snapshot ReadObjects(BinaryReader r,string name) {
-            var snapshot=new Snapshot{Name=name};
+        static Snapshot ReadObjects(BinaryReader r,string name,DatabaseEngine engine) {
+            var snapshot=new Snapshot{Name=name,Engine=engine};
             int objects=Count(r);
             for(int i=0;i<objects;i++) {
                 var obj=new Item{Kind=r.ReadString(),Schema=r.ReadBoolean()?r.ReadString():null,Name=r.ReadString(),
@@ -96,8 +99,12 @@ namespace DBCompare {
                 LeftName=r.ReadString(),RightName=r.ReadString(),Total=Count(r),Different=Count(r),Unreadable=Count(r),
                 LeftConnection=r.ReadString(),RightConnection=r.ReadString()};
             entry.Name=version==1?HistoryEntry.PairName(entry.LeftName,entry.RightName):r.ReadString();
-            if(version!=2) {
+            if(version==1 || version==3) {
                 entry.LeftNeedsPassword=r.ReadBoolean();entry.RightNeedsPassword=r.ReadBoolean();
+            }
+            if(version==4) {
+                entry.Engine=(DatabaseEngine)r.ReadByte();
+                if(entry.Engine!=DatabaseEngine.PostgreSql) throw new InvalidDataException("无法识别履历版本。");
             }
             return entry;
         }
@@ -121,7 +128,7 @@ namespace DBCompare {
                 var info=ReadHeader(header,entry.Path);
                 using(var zip=new GZipStream(file,CompressionMode.Decompress))
                 using(var r=new BinaryReader(zip)) {
-                    var pair=new[]{ReadObjects(r,info.LeftName),ReadObjects(r,info.RightName)};
+                    var pair=new[]{ReadObjects(r,info.LeftName,info.Engine),ReadObjects(r,info.RightName,info.Engine)};
                     if(zip.ReadByte()!=-1) throw new InvalidDataException("履历包含多余的数据。");
                     return pair;
                 }

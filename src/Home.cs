@@ -20,6 +20,7 @@ namespace DBCompare {
             Get<MenuItem>("GoHome").Click+=(s,e)=>pages.SelectedItem=home;
             Get<MenuItem>("NewMenu").Click+=(s,e)=>NewSession(null);
             Get<Button>("NewComparison").Click+=(s,e)=>NewSession(null);
+            Get<Button>("NewPostgres").Click+=(s,e)=>NewSession(null,DatabaseEngine.PostgreSql);
             Get<Button>("AddSession").Click+=(s,e)=>NewSession(null);
             Get<Button>("OpenHistory").Click+=async (s,e)=>await OpenStored(SelectedHistory);
             Get<Button>("RerunHistory").Click+=(s,e)=>PrepareSelected();
@@ -36,8 +37,8 @@ namespace DBCompare {
             Tree.PreviewKeyDown+=async (s,e)=>{
                 if(e.Key!=Key.Enter) return;
                 if(SelectedHistory!=null) {e.Handled=true;await OpenStored(SelectedHistory);}
-                else if(Tree.SelectedItem is TreeViewItem && Object.Equals(((TreeViewItem)Tree.SelectedItem).Tag,"newSql")) {
-                    e.Handled=true;NewSession(null);
+                else if(Tree.SelectedItem is TreeViewItem && ((TreeViewItem)Tree.SelectedItem).Tag is DatabaseEngine) {
+                    e.Handled=true;NewSession(null,(DatabaseEngine)((TreeViewItem)Tree.SelectedItem).Tag);
                 }
             };
             Get<TextBox>("HistorySearch").TextChanged+=(s,e)=>FilterHistory();
@@ -106,9 +107,12 @@ namespace DBCompare {
             string term=Get<TextBox>("HistorySearch").Text.Trim();
             Tree.Items.Clear();
             var create=Node(L.T("新建"),FolderIcon,Brushes.DarkSeaGreen);
-            var sql=Node(L.T("SQL Server 结构比较"),FileIcon,Brushes.LightBlue);
-            sql.Tag="newSql";sql.PreviewMouseDoubleClick+=(s,e)=>OpenAfterDoubleClick(e,()=>NewSession(null));
-            create.Items.Add(sql);Tree.Items.Add(create);
+            foreach(var engine in new[]{DatabaseEngine.SqlServer,DatabaseEngine.PostgreSql}) {
+                var node=Node(L.T(engine==DatabaseEngine.SqlServer?"SQL Server 结构比较":"PostgreSQL 结构比较"),FileIcon,Brushes.LightBlue);
+                node.Tag=engine;node.PreviewMouseDoubleClick+=(s,e)=>OpenAfterDoubleClick(e,()=>NewSession(null,engine));
+                create.Items.Add(node);
+            }
+            Tree.Items.Add(create);
             var saved=Node(L.T("自动保存"),FolderIcon,Brushes.Wheat);
             Tree.Items.Add(saved);
             saved.IsExpanded=term.Length>0 || autoExpanded;
@@ -145,7 +149,7 @@ namespace DBCompare {
             Get<StackPanel>("HistoryInfo").Visibility=entry==null?Visibility.Collapsed:Visibility.Visible;
             if(entry==null) return;
             Get<TextBlock>("HistoryTitle").Text=entry.Name;
-            Get<TextBlock>("HistoryTime").Text=entry.Time;
+            Get<TextBlock>("HistoryTime").Text=entry.Time+"   ·   "+(entry.Engine==DatabaseEngine.PostgreSql?"PostgreSQL":"SQL Server");
             Get<TextBlock>("HistorySides").Text=L.T("左侧")+"   "+entry.LeftName+"\n"+L.T("右侧")+"   "+entry.RightName;
             Get<TextBlock>("HistorySummary").Text=L.F("{0} 个对象",entry.Total)+"   ·   "+entry.Summary;
         }

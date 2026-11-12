@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace DBCompare {
-    internal static class Tests {
+    internal static partial class Tests {
         static int checks;
         static void Expect(bool value,string label) {
             if(!value) throw new Exception(label);
@@ -51,6 +51,7 @@ namespace DBCompare {
             var digit=SqlDiff.Detail("SELECT 950","SELECT 940").Single();
             Expect(digit.A.Parts.Single(p=>p.Tint==2).Text=="5" && digit.B.Parts.Single(p=>p.Tint==2).Text=="4","intraline digit highlights");
             Expect(Result.PropertyStatus("字段 [x] / 默认值","((1))","( (1) )")==Result.Format,"expression formatting");
+            PostgresTextTests();
         }
         static Item Obj(string schema,string name,string kind,string sql) {
             return new Item{Schema=schema,Name=name,Kind=kind,Sql=sql};
@@ -383,6 +384,7 @@ namespace DBCompare {
             Expect(tabs.Items.Count==3 && ui.Current.Name==first.Name && oldSession.Name=="旧版快照","renamed legacy snapshot retains name and can open");
             Layout(host,"named-tabs");
             LanguageTests(ui,host,tabs,settings,first,proc,languagePath);
+            PostgresUiTests(ui,host,tabs,home,history);
             foreach(var saved in restarted.List(out skipped)) history.Delete(saved);
             File.Delete(languagePath);
             Directory.Delete(folder);
@@ -390,6 +392,11 @@ namespace DBCompare {
         }
         static void LanguageTests(App ui,FrameworkElement host,TabControl tabs,LanguageSettings settings,
             HistoryEntry saved,Result proc,string path) {
+            var helpMenu=(MenuItem)ui.Window.FindName("HelpMenu");
+            var contents=(MenuItem)ui.Window.FindName("HelpContentsMenu");
+            var about=(MenuItem)ui.Window.FindName("AboutMenu");
+            Expect(helpMenu.Items.Contains(contents) && helpMenu.Items.Contains(about) &&
+                Object.Equals(contents.Header,"帮助内容") && Object.Equals(about.Header,"关于"),"Chinese Help menu entries");
             Expect(LanguageSettings.SystemLanguage(new System.Globalization.CultureInfo("ja-JP"))=="ja-JP" &&
                 LanguageSettings.SystemLanguage(new System.Globalization.CultureInfo("de-DE"))=="en-US","Japanese detection and English fallback");
             var session=ui.Current;
@@ -409,6 +416,10 @@ namespace DBCompare {
             choice.SelectedIndex=1;
             Visuals<Button>(panel).Single(b=>b.IsDefault).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Layout(host,"japanese-detail");
+            Expect(Object.Equals(contents.Header,"ヘルプの内容") && Object.Equals(about.Header,"バージョン情報"),"Japanese Help menu entries");
+            var aboutPanel=(StackPanel)((DataTemplate)ui.Window.FindResource("AboutView")).LoadContent();
+            var credit=(StackPanel)aboutPanel.Children[2];
+            Expect(((TextBlock)credit.Children[0]).Text=="設計・開発" && ((TextBlock)credit.Children[1]).Text=="liu pin","Japanese About credits liu pin exactly");
             Expect(L.Current=="ja-JP" && File.ReadAllText(path)=="ja-JP" && ui.Window.Title.Contains("構造比較") &&
                 ((MenuItem)ui.Window.FindName("OptionsMenu")).Header.Equals("オプション…"),"OK updates resources and persists Japanese");
             Expect(tabs.SelectedItem==sqlTab && states.Mode=="不同" && states.Summary().Contains("箇所") &&
@@ -418,6 +429,10 @@ namespace DBCompare {
             Visuals<ComboBox>(dp).Single().SelectedIndex=2;dismissed.Close();
             Expect(L.Current=="ja-JP" && File.ReadAllText(path)=="ja-JP","dismissed choice leaves language untouched");
             ui.ChangeLanguage("en-US");tabs.SelectedItem=tableTab;Layout(host,"english-properties");
+            var helpPanel=(StackPanel)((DataTemplate)ui.Window.FindResource("HelpContentView")).LoadContent();
+            Expect(Object.Equals(contents.Header,"Help Contents") && Object.Equals(about.Header,"About") &&
+                helpPanel.Children.OfType<TextBlock>().Any(t=>t.Text.Contains("PostgreSQL") && t.Text.Contains("SQL Server")) &&
+                helpPanel.Children.OfType<TextBlock>().Any(t=>t.Text.Contains("Shift+F7")),"English offline help content");
             var props=Visuals<DataGrid>(host).Single();
             Expect(props.Columns[0].Header.Equals("Schema properties") &&
                 Visuals<TextBlock>(props).Any(t=>t.Text.Contains("Maximum length (bytes)")),"open table property headers and cells translated");

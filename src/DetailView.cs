@@ -75,7 +75,7 @@ namespace DBCompare {
             var b=r.Right==null?new SortedDictionary<string,string>():r.Right.Props;
             var rows=a.Keys.Union(b.Keys,StringComparer.Ordinal).OrderBy(k=>k,StringComparer.Ordinal).Select(k=>{
                 string av,bv;bool hasA=a.TryGetValue(k,out av),hasB=b.TryGetValue(k,out bv);
-                return new PropertyRow{Key=k,A=hasA?av:"—",B=hasB?bv:"—",Status=hasA && hasB?Result.PropertyStatus(k,av,bv):hasA?Result.OnlyL:Result.OnlyR};
+                return new PropertyRow{Key=k,A=hasA?av:"—",B=hasB?bv:"—",Status=hasA && hasB?Result.PropertyStatus(k,av,bv,r.Engine):hasA?Result.OnlyL:Result.OnlyR};
             }).ToList();
             var grid=new DataGrid();grid.Columns.Add(Column(()=>L.T("结构属性"),"Key",1.2));grid.Columns.Add(Column(()=>L.T("左侧")+" · "+leftName,"A",1));grid.Columns.Add(Column(()=>L.T("右侧")+" · "+rightName,"B",1));
             var style=new Style(typeof(DataGridRow));

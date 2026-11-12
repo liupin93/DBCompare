@@ -33,12 +33,21 @@ namespace DBCompare {
         Snapshot left,right;
         List<Result> results=new List<Result>();
         CancellationTokenSource running;
-        readonly ObjectCategory[] categories = new[]{"表","视图","存储过程","函数","触发器","数据库触发器"}
-            .Select(kind=>new ObjectCategory(kind)).ToArray();
+        public readonly DatabaseEngine Engine;
+        readonly ObjectCategory[] categories;
         public T Get<T>(string name) where T:class {return (T)View.FindName(name);}
-        public ComparisonSession(App app,int number,HistoryEntry entry) {
+        public ComparisonSession(App app,int number,HistoryEntry entry,DatabaseEngine engine) {
             this.app=app;origin=entry;this.number=number;
+            Engine=engine;
+            var kinds=engine==DatabaseEngine.PostgreSql?new[]{"表","视图","物化视图","存储过程","函数","触发器"}:
+                new[]{"表","视图","存储过程","函数","触发器","数据库触发器"};
+            categories=kinds.Select(kind=>new ObjectCategory(kind)).ToArray();
             View=(FrameworkElement)((DataTemplate)app.Window.FindResource("ComparisonView")).LoadContent();
+            L.Bind(Get<Expander>("Connections"),HeaderedContentControl.HeaderProperty,
+                ()=>L.T("数据库连接")+"   ·   "+(Engine==DatabaseEngine.PostgreSql?"PostgreSQL":"SQL Server"));
+            if(engine==DatabaseEngine.PostgreSql) {
+                foreach(var name in new[]{"LeftConn","RightConn"}) Get<TextBox>(name).ToolTip="Host=localhost;Port=5432;Database=sales;Username=compare;Password=...";
+            }
             Tab=new TabItem{Content=View,Tag=this};
             caption=app.TabHeader(Tab,()=>app.Close(Tab));
             Get<TextBox>("ComparisonName").TextChanged+=(s,e)=>Rename();
@@ -112,10 +121,11 @@ namespace DBCompare {
             Get<TextBlock>("EmptyHint").Text=L.T(left==null?"在上方粘贴两个库的连接字符串，然后点击「开始比较」。":results.Count==0?"":"可以切换顶部显示条件，或修改查找内容。");
         }
         async Task<Snapshot> Side(string connection,string side,CancellationTokenSource active) {
-            try {return await app.LoadSnapshot(connection,active.Token).ConfigureAwait(false);}
+            try {return await app.LoadSnapshot(Engine,connection,active.Token).ConfigureAwait(false);}
             catch(Exception e) {
                 if(active.IsCancellationRequested) throw new OperationCanceledException(active.Token);
                 active.Cancel();
+                if(Engine==DatabaseEngine.PostgreSql) throw new ConnectionReadException(()=>L.F("{0}：{1}",L.T(side),PostgresDatabase.ErrorMessage(e)),e);
                 // Connection string parser errors can echo user input. Never display their raw message.
                 var sql=e as SqlException;
                 Func<string> message=()=>sql==null ? (e is ArgumentException ? L.T("请检查连接字符串的格式、Server 和 Database。") : L.F("读取数据库结构失败（{0}）。",e.GetType().Name)) :

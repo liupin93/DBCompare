@@ -26,7 +26,7 @@ namespace DBCompare {
             string a = result.Left == null ? null : result.Left.Sql;
             string b = result.Right == null ? null : result.Right.Sql;
             controls.Comparable = result.Left == null || result.Right == null || (a != null && b != null);
-            pairs = controls.Comparable ? SqlDiff.Detail(a,b) : SqlDiff.Detail(a ?? b,b ?? a);
+            pairs = controls.Comparable ? SqlDiff.Detail(a,b,result.Engine,result.SqlRoutineBody) : SqlDiff.Detail(a ?? b,b ?? a,result.Engine,result.SqlRoutineBody);
             if (!controls.Comparable) foreach (var pair in pairs) {
                 if (a == null) pair.A = null; else pair.B = null;
             }

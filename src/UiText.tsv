@@ -1,4 +1,4 @@
-DBCompare · SQL Server 结构比较	DBCompare · SQL Server 構造比較	DBCompare · SQL Server Schema Compare	WindowTitle
+DBCompare · 数据库结构比较	DBCompare · データベース構造比較	DBCompare · Database Schema Compare	WindowTitle
 数据库连接	データベース接続	Database connections	Connections
 比较名称	比較名	Comparison name	ComparisonName
 留空时按数据库名称自动命名	空欄の場合はデータベース名から自動生成します	Leave blank to use the database names	NameHint
@@ -46,6 +46,18 @@ SQL Server 结构比较	SQL Server 構造比較	SQL Server schema comparison	Sql
 设定(_T)	設定(_T)	Se_ttings	SettingsMenu
 选项…	オプション…	Options…	OptionsMenu
 选项	オプション	Options
+帮助(_H)	ヘルプ(_H)	_Help	HelpMenu
+帮助内容	ヘルプの内容	Help Contents	HelpContents
+关于	バージョン情報	About	About
+关闭	閉じる	Close
+设计开发人	設計・開発	Designed and developed by	AboutCredit
+用于只读比较两个 SQL Server 数据库或两个 PostgreSQL 数据库的结构与 SQL 定义。	SQL Server 同士または PostgreSQL 同士で、データベース構造と SQL 定義を読み取り専用で比較します。	Compare schemas and SQL definitions between two SQL Server databases or two PostgreSQL databases using read-only access.	AboutDescription
+在主页选择 SQL Server 或 PostgreSQL 结构比较，分别粘贴左右两侧的连接字符串，点击“开始比较”。两侧可以位于不同服务器。	ホームで SQL Server または PostgreSQL の構造比較を選び、左右の接続文字列を入力して「比較開始」をクリックします。別々のサーバーにあるデータベースも比較できます。	On the home page, choose SQL Server or PostgreSQL schema comparison. Enter the left and right connection strings and click Start comparison. The databases can be on different servers.	HelpConnect
+展开对象分类查看结果。黑色表示相同，红色表示不同；用顶部工具栏筛选相同、不同或仅一侧存在的对象。	オブジェクトの種類を展開すると、一致する項目は黒、差異のある項目は赤で表示されます。上部のツールバーで一致、相違、片側のみの項目に絞り込めます。	Expand an object group to see the results. Matching objects appear in black and differences in red. Use the toolbar to show matches, differences or objects found on only one side.	HelpOverview
+差异明细	差異の詳細	Difference details	HelpDetailsHeading
+双击对象打开明细标签。表可逐项核对字段、约束和索引。SQL 定义中，天蓝色标记格式变化，黄色标记内容变化。按 F7 跳到下一处差异，按 Shift+F7 返回上一处。	オブジェクトをダブルクリックすると詳細タブが開きます。テーブルでは列、制約、インデックスを比較できます。SQL 定義では水色が書式の差異、黄色が内容の差異です。F7 で次の差異、Shift+F7 で前の差異に移動します。	Double-click an object to open its details. For tables, compare columns, constraints and indexes. In SQL definitions, light blue marks formatting changes and yellow marks content changes. Press F7 for the next difference or Shift+F7 for the previous one.	HelpReadDiff
+比较履历	比較履歴	Comparison history	HelpHistoryHeading
+在主页的“自动保存”中双击履历，可离线查看当时的结果。要读取最新结构，选择“重新比较”，确认连接设置后点击“开始比较”。右键履历可以重命名或删除。	ホームの「自動保存」で履歴をダブルクリックすると、保存時の結果をオフラインで確認できます。最新の構造を取得するには「再比較」を選び、接続設定を確認して「比較開始」をクリックします。履歴の右クリックで名前の変更や削除ができます。	Double-click an entry under Auto-saved on the home page to view a saved snapshot offline. To read the latest schema, choose Compare again, check the connection settings and click Start comparison. Right-click an entry to rename or delete it.	HelpHistory
 共通设定	共通設定	General
 语言	言語	Language
 确定	OK	OK
@@ -208,3 +220,29 @@ XML 架构集合	XML スキーマコレクション	XML schema collection
 最后执行	最後に実行	Fires last
 是	はい	Yes
 否	いいえ	No
+PostgreSQL 结构比较	PostgreSQL 構造比較	PostgreSQL schema comparison	PgCompare
+数据库类型不匹配。	データベースの種類が一致しません。	Database engines do not match.
+需要 PostgreSQL 14 或更高版本。	PostgreSQL 14 以降が必要です。	PostgreSQL 14 or later is required.
+请检查 PostgreSQL 连接字符串的 Host 和 Database。	PostgreSQL 接続文字列の Host と Database を確認してください。	Check Host and Database in the PostgreSQL connection string.
+PostgreSQL 错误 {0}：{1}	PostgreSQL エラー {0}：{1}	PostgreSQL error {0}: {1}
+无法读取 PostgreSQL 结构，请检查网络、SSL 和连接设置（{0}）。	PostgreSQL の構造を読み取れません。ネットワーク、SSL、接続設定を確認してください（{0}）。	Could not read the PostgreSQL schema. Check network, SSL and connection settings ({0}).
+物化视图	マテリアライズドビュー	Materialized views
+分区键	パーティションキー	Partition key
+分区边界	パーティション境界	Partition bound
+继承来源	継承元	Parent relations
+对象选项	オブジェクトオプション	Object options
+数组维数	配列の次元数	Array dimensions
+标识模式	IDENTITY 方式	Identity mode
+生成模式	生成方式	Generation mode
+序列最小值	シーケンス最小値	Sequence minimum
+序列最大值	シーケンス最大値	Sequence maximum
+序列缓存	シーケンスキャッシュ	Sequence cache
+序列循环	シーケンス循環	Sequence cycles
+约束	制約	Constraint
+已验证	検証済み	Validated
+可延迟	遅延可能	Deferrable
+初始延迟	初期遅延	Initially deferred
+例程	ルーチン	Routine
+输入参数类型	入力引数の型	Input argument types
+所属关系	対象リレーション	Parent relation
+启用模式	有効化モード	Enabled mode

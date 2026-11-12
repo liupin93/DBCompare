@@ -1,12 +1,12 @@
 # DBCompare
 
-Windows 桌面上的 SQL Server 结构比较工具。双击 [bin/DBCompare.exe](bin/DBCompare.exe) 启动，需要 .NET Framework 4.7.2 或更高版本。数据库元数据查询按 SQL Server 2014 设计。
+Windows 桌面数据库结构比较工具，支持 SQL Server 对 SQL Server（2014 起）和 PostgreSQL 对 PostgreSQL（14 起）。需要 .NET Framework 4.7.2 或更高版本。解压完整发布包后双击 `DBCompare.exe`；源码目录也可直接启动 [bin/DBCompare.exe](bin/DBCompare.exe)。请一并保留同目录的配置文件和 `drivers` 文件夹，使用 PostgreSQL 无需安装 ODBC 或客户端软件。
 
 ## 开始比较
 
 首次启动按 Windows 显示语言选择简体中文、日语或英语；其他系统语言默认使用英语。可在 **设定 → 选项 → 共通设定 → 语言** 中切换，点击“确定”后立即应用到已打开的标签。下次启动会读取当前用户的 `%LOCALAPPDATA%\DBCompare\language.txt`。日语菜单路径为 **設定 → オプション**，英语为 **Settings → Options**。
 
-1. 在主页点击“SQL Server 结构比较”或左下角的“＋”，填写比较名称和两侧的 **ADO.NET SqlClient** 连接字符串，然后点击“开始比较”。连接字符串可明文查看、编辑和复制。留空名称时，完成比较后会用数据库对命名标签。每次新建或打开履历都会创建独立的比较标签，可同时运行多个比较。
+1. 在主页选择“SQL Server 结构比较”或“PostgreSQL 结构比较”，填写比较名称及两侧对应的连接字符串，点击“开始比较”。左下角的“＋”沿用 SQL Server 默认入口。连接字符串可明文查看、编辑和复制。留空名称时，完成比较后会用数据库对命名标签。每次新建或打开履历都会创建独立的比较标签，可同时运行多个比较。
 2. 总览按表、视图、存储过程等类型分组。点击分类标题可展开或折叠，顶部工具栏也可一次展开或折叠全部分类。用工具栏或“视图”菜单选择全部、不同、相同、仅左侧或仅右侧。黑色表示相同，红色表示存在差异。“不同”包含内容变化、仅格式变化和单侧独有。不可读且无法判定的对象在“全部”中单独标出。
 3. 双击对象或按 Enter 打开明细标签页。顶部筛选作用于当前页面的对象、SQL 行或结构属性，切回总览时保留折叠和筛选状态。SQL 定义左右联动，行号固定，差异块起点标有三角形。点击左侧色带可以定位，点击任意代码行可在底部“当前行对照”中上下核对原文。
 4. SQL 文本用天蓝色标记缩进、空白和换行差异，用黄色标记内容变化。发生变化的行结束符显示为 ↵。字符串、带引号的标识符以及注释内的文字按原文比较。结构属性变化以黄色标出。
@@ -31,9 +31,17 @@ SQL Server 身份验证示例：
 Server=tcp:SERVER02,1433;Database=SalesTest;User ID=compare_user;Password=your_password;
 ```
 
-账号需要能够连接目标库并具备数据库级 `VIEW DEFINITION`。如存在对象级显式拒绝，SQL Server 仍可能隐藏对象。比较仅读取系统目录，不查询业务表的数据，也不运行被比较的 SQL 定义。建议在两库结构稳定时比较，避免采集期间的 DDL 变更影响结果。
+SQL Server 账号需要能够连接目标库并具备数据库级 `VIEW DEFINITION`。如存在对象级显式拒绝，SQL Server 仍可能隐藏对象。比较仅读取系统目录，不查询业务表的数据，也不运行被比较的 SQL 定义。
 
-## 比较范围
+PostgreSQL 使用 Npgsql 连接字符串，例如：
+
+```text
+Host=db.example.com;Port=5432;Database=sales;Username=compare_user;Password=your_password;
+```
+
+PostgreSQL 账号需要能连接目标库、读取所需系统目录并调用定义查询函数。采集在只读、可重复读事务中完成。历史快照保留数据库类型，再次比较时会使用对应驱动；旧 SQL Server 履历可继续使用。
+
+## SQL Server 比较范围
 
 | 分类 | 比较内容 |
 | --- | --- |
@@ -43,6 +51,14 @@ Server=tcp:SERVER02,1433;Database=SalesTest;User ID=compare_user;Password=your_p
 | 触发器 | 表或视图的 DML 触发器、库级 DDL 触发器的定义、状态及事件 |
 
 对象按类型、架构名和对象名精确匹配，区分大小写。比较会保留约束名称，包括 SQL Server 自动生成的名称。加密模块的定义不可读时会标记原因。首版聚焦以上目录属性，范围不含业务数据、权限、CLR 模块、实例级对象、物理存储布局及新版本 SQL Server 的专属属性。
+
+## PostgreSQL 比较范围
+
+- 普通表、分区表及其字段、类型、列序、排序规则、可空性、默认值、生成列、标识列参数、分区键、分区边界和继承关系。
+- 主键、外键、唯一、检查和排斥约束，以及索引定义（含表达式、条件和包含列）。
+- 普通视图、物化视图及输出列。比较的是系统目录重建的定义，数据库没有保留的原始排版无法还原。
+- 函数和存储过程按架构、名称及输入参数类型匹配，普通触发器按架构、所属关系及触发器名称匹配。SQL 和 PL/pgSQL 例程区分函数体内的排版与字符串内容变化，其他语言的函数体按原文处理。
+- 自动排除系统架构与内部触发器。当前范围不含独立序列、扩展安装状态、事件触发器、权限、行级安全策略、业务数据及跨引擎迁移比较。
 
 ## 键盘操作
 
@@ -56,11 +72,12 @@ Server=tcp:SERVER02,1433;Database=SalesTest;User ID=compare_user;Password=your_p
 
 ## 从源码构建
 
-在项目目录下运行，无需下载 NuGet 包。
+在项目目录下运行。随包提供 Npgsql 8.0.9 及其 .NET Framework 依赖；构建时按 `src/PostgresPackages.lock` 检查 DLL，缺失或哈希不符时从官方 NuGet 源恢复。
 
 ```powershell
 .\build.ps1
 .\build.ps1 -Test
+.\build.ps1 -Package
 ```
 
-测试使用构造的对象和元数据，覆盖比较分类、SQL 高亮、筛选、标签页和界面布局。连接真实 SQL Server 时使用界面里的连接字符串。
+发布包输出到 `dist/DBCompare-windows.zip`。默认测试使用构造的对象和元数据。若要运行 PostgreSQL 实库测试，在专用测试实例上将环境变量 `DBCOMPARE_PG_TEST_ADMIN` 设为管理员连接字符串后运行 `.\build.ps1 -Test`。测试会创建并清理两个随机命名的数据库和一个仅用于测试的角色，通过正常主页入口执行只读比较，并验证履历回放和重新连接。

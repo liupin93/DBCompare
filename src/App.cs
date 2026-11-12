@@ -18,7 +18,10 @@ namespace DBCompare {
         public readonly Window Window;
         T Get<T>(string name) where T:class {return (T)Window.FindName(name);}
         internal readonly HistoryStore History;
-        internal readonly Func<string,CancellationToken,Task<Snapshot>> LoadSnapshot;
+        readonly Func<string,CancellationToken,Task<Snapshot>> sqlLoader;
+        internal Task<Snapshot> LoadSnapshot(DatabaseEngine engine,string input,CancellationToken token) {
+            return engine==DatabaseEngine.PostgreSql?PostgresDatabase.Load(input,token):sqlLoader(input,token);
+        }
         readonly TabControl pages;
         readonly TabItem home;
         readonly TextBox search;
@@ -40,7 +43,9 @@ namespace DBCompare {
             Get<MenuItem>("OptionsMenu").Click+=(s,e)=>{
                 var dialog=OptionsDialog();dialog.Owner=Window;dialog.ShowDialog();
             };
-            History=history;LoadSnapshot=loader??Database.Load;
+            Get<MenuItem>("HelpContentsMenu").Click+=(s,e)=>ShowHelpWindow("帮助内容","HelpContentView",570);
+            Get<MenuItem>("AboutMenu").Click+=(s,e)=>ShowHelpWindow("关于","AboutView",430);
+            History=history;sqlLoader=loader??Database.Load;
             pages=Get<TabControl>("Pages");home=Get<TabItem>("Home");search=Get<TextBox>("Search");
             foreach(string label in new[]{"全部","不同","相同","仅左侧","仅右侧"}) {
                 var radio=new RadioButton{GroupName="visibility",Style=(Style)Window.FindResource("FilterButton")};
@@ -97,8 +102,24 @@ namespace DBCompare {
             };
             InitHome();SyncToolbar();
         }
-        ComparisonSession NewSession(HistoryEntry entry) {
-            var session=new ComparisonSession(this,++nextNumber,entry);
+        void ShowHelpWindow(string title,string template,double width) {
+            var dialog=new Window {
+                Owner=Window, Title=L.T(title), Width=width, SizeToContent=SizeToContent.Height,
+                MaxHeight=SystemParameters.WorkArea.Height*0.85, ResizeMode=ResizeMode.CanResizeWithGrip,
+                MinWidth=320, MinHeight=160, ShowInTaskbar=false, WindowStartupLocation=WindowStartupLocation.CenterOwner,
+                Language=Window.Language, FontFamily=Window.FontFamily, FontSize=Window.FontSize,
+                Background=System.Windows.Media.Brushes.White
+            };
+            var body=new DockPanel{Margin=new Thickness(20)};
+            var close=new Button{Content=L.T("关闭"),IsCancel=true,MinWidth=82,Padding=new Thickness(12,4,12,4),
+                HorizontalAlignment=HorizontalAlignment.Right,Margin=new Thickness(0,16,0,0)};
+            DockPanel.SetDock(close,Dock.Bottom);body.Children.Add(close);
+            body.Children.Add(new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Content=((DataTemplate)Window.FindResource(template)).LoadContent()});
+            dialog.Content=body;dialog.ShowDialog();
+        }
+        ComparisonSession NewSession(HistoryEntry entry,DatabaseEngine engine=DatabaseEngine.SqlServer) {
+            var session=new ComparisonSession(this,++nextNumber,entry,entry==null?engine:entry.Engine);
             pages.Items.Add(session.Tab);
             ActivatePage(session.Tab);
             return session;
@@ -149,7 +170,7 @@ namespace DBCompare {
                 ActivatePage(existing);return;
             }
             var tab=new TabItem{Tag=owner,Uid=result.Key,ToolTip=owner.Name+"   /   "+result.Name};
-            TabHeader(tab,()=>Close(tab)).Text=(result.Left??result.Right).Name;
+            TabHeader(tab,()=>Close(tab)).Text=result.Engine==DatabaseEngine.PostgreSql?result.Name:(result.Left??result.Right).Name;
             tab.Content=DetailView.Create(result,left,right,SyncToolbar);
             pages.Items.Add(tab);ActivatePage(tab);
         }
