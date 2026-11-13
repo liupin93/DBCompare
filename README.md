@@ -1,5 +1,7 @@
 # DBCompare
 
+简体中文 · [English](README.en.md)
+
 Windows 桌面数据库结构比较工具，支持 SQL Server 对 SQL Server（2014 起）和 PostgreSQL 对 PostgreSQL（14 起）。需要 .NET Framework 4.7.2 或更高版本。解压完整发布包后双击 `DBCompare.exe`；源码目录也可直接启动 [bin/DBCompare.exe](bin/DBCompare.exe)。请一并保留同目录的配置文件和 `drivers` 文件夹，使用 PostgreSQL 无需安装 ODBC 或客户端软件。
 
 ## 开始比较
@@ -84,3 +86,11 @@ PostgreSQL 账号需要能连接目标库、读取所需系统目录并调用定
 ```
 
 发布包输出到 `dist/DBCompare-windows.zip`。默认测试使用构造的对象和元数据。若要运行 PostgreSQL 实库测试，在专用测试实例上将环境变量 `DBCOMPARE_PG_TEST_ADMIN` 设为管理员连接字符串后运行 `.\build.ps1 -Test`。测试会创建并清理两个随机命名的数据库和一个仅用于测试的角色，通过正常主页入口执行只读比较，并验证履历回放和重新连接。
+
+## 许可证
+
+Copyright © 2026 liu pin
+
+联系邮箱：[lp1060724715@163.com](mailto:lp1060724715@163.com)
+
+DBCompare 采用 [Apache License 2.0](LICENSE)，允许在遵守许可条款的前提下使用、修改、分发和商业使用。随附的第三方组件适用各自的许可证，详见[第三方许可声明](bin/drivers/ThirdPartyNotices.txt)。

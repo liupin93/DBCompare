@@ -162,6 +162,14 @@
      <TextBlock Foreground="#466063" Text="{Binding [AboutCredit], Source={StaticResource UiStrings}}"/>
      <TextBlock Text="liu pin" FontWeight="SemiBold" Margin="12,0,0,0"/>
     </StackPanel>
+    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+     <TextBlock Foreground="#466063" Text="{Binding [AboutEmail], Source={StaticResource UiStrings}}"/>
+     <TextBox Text="lp1060724715@163.com" IsReadOnly="True" BorderThickness="0" Background="Transparent" Padding="0" Margin="12,0,0,0"/>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+     <TextBlock Foreground="#466063" Text="{Binding [AboutLicense], Source={StaticResource UiStrings}}"/>
+     <TextBlock Text="Apache License 2.0" Margin="12,0,0,0"/>
+    </StackPanel>
    </StackPanel>
   </DataTemplate>
  </Window.Resources>

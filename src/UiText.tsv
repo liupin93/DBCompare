@@ -51,6 +51,8 @@ SQL Server 结构比较	SQL Server 構造比較	SQL Server schema comparison	Sql
 关于	バージョン情報	About	About
 关闭	閉じる	Close
 设计开发人	設計・開発	Designed and developed by	AboutCredit
+联系邮箱	連絡先メール	Contact email	AboutEmail
+许可证	ライセンス	License	AboutLicense
 用于只读比较两个 SQL Server 数据库或两个 PostgreSQL 数据库的结构与 SQL 定义。	SQL Server 同士または PostgreSQL 同士で、データベース構造と SQL 定義を読み取り専用で比較します。	Compare schemas and SQL definitions between two SQL Server databases or two PostgreSQL databases using read-only access.	AboutDescription
 在主页选择 SQL Server 或 PostgreSQL 结构比较，分别粘贴左右两侧的连接字符串，点击“开始比较”。两侧可以位于不同服务器。	ホームで SQL Server または PostgreSQL の構造比較を選び、左右の接続文字列を入力して「比較開始」をクリックします。別々のサーバーにあるデータベースも比較できます。	On the home page, choose SQL Server or PostgreSQL schema comparison. Enter the left and right connection strings and click Start comparison. The databases can be on different servers.	HelpConnect
 展开对象分类查看结果。黑色表示相同，红色表示不同；用顶部工具栏筛选相同、不同或仅一侧存在的对象。	オブジェクトの種類を展開すると、一致する項目は黒、差異のある項目は赤で表示されます。上部のツールバーで一致、相違、片側のみの項目に絞り込めます。	Expand an object group to see the results. Matching objects appear in black and differences in red. Use the toolbar to show matches, differences or objects found on only one side.	HelpOverview

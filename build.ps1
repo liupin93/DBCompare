@@ -37,6 +37,7 @@ $driverFiles = foreach ($line in Get-Content -LiteralPath "$PSScriptRoot\src\Pos
 }
 & "$framework\csc.exe" /nologo /optimize+ /target:winexe /codepage:65001 /utf8output /reference:System.Data.dll /reference:System.Xaml.dll @references @resources "/out:$outDir\DBCompare.exe" @sources
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
+Copy-Item -LiteralPath "$PSScriptRoot\LICENSE" -Destination "$outDir\LICENSE" -Force
 Write-Output "$outDir\DBCompare.exe"
 if ($Test) {
     $testExe = Join-Path $outDir ("DBCompareTests-" + [Guid]::NewGuid() + ".exe")
@@ -61,7 +62,7 @@ if ($Package) {
     try {
         $zip = [IO.Compression.ZipFile]::Open($pending, 'Create')
         try {
-            $files = @("$outDir\DBCompare.exe", "$outDir\DBCompare.exe.config", "$driverDir\ThirdPartyNotices.txt") + $driverFiles
+            $files = @("$outDir\DBCompare.exe", "$outDir\DBCompare.exe.config", "$outDir\LICENSE", "$driverDir\ThirdPartyNotices.txt") + $driverFiles
             foreach ($file in $files) {
                 $entry = $file.Substring($outDir.Length + 1).Replace('\','/')
                 $null = [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file, $entry)
